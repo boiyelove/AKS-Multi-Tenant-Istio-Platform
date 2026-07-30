@@ -1,0 +1,14 @@
+goal.md
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea/
+.vscode/
+*.tfstate
+*.tfstate.*
+.terraform/
+node_modules/
+dist/
+coverage/
+

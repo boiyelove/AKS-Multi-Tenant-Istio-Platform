@@ -1,0 +1,4 @@
+* @platform-owners
+/infra/ @platform-owners @security-owners
+/src/ @platform-owners @security-owners
+/tests/ @platform-owners @security-owners
