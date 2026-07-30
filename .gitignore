@@ -11,4 +11,5 @@ goal.md
 node_modules/
 dist/
 coverage/
-
+__pycache__/
+*.py[cod]
