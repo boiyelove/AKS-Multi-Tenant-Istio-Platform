@@ -12,6 +12,14 @@ subscription owners, shared nodes, DNS, and the Istio control plane remain
 trust boundaries. Use dedicated clusters when those boundaries are not
 acceptable.
 
+## Example synopsis
+
+Two synthetic tenants are rendered into isolated namespaces with quotas, default-deny network policy, Istio strict mTLS, scoped authorization, and controlled egress; tests prove that cross-tenant paths remain denied.
+
+## Real-world scenario
+
+An internal platform team wants to consolidate small business-unit workloads onto one AKS cluster without turning namespace boundaries into an honor system. This project makes isolation explicit and testable while retaining shared operational tooling.
+
 ## Architecture
 
 ```mermaid
@@ -97,7 +105,7 @@ organization-specific.
 
 ## Verification and evidence
 
-`./scripts/validate.sh` compiles Bicep when Azure CLI is available, renders the
+[[`./scripts/validate.sh`](scripts/validate.sh)](scripts/validate.sh) compiles Bicep when Azure CLI is available, renders the
 sample twice and compares bytes, runs unit/security tests, validates JSON, and
 checks shell scripts. CI repeats these gates and runs Trivy configuration and
 secret scans. Live AKS denial, recovery, identity, load, and teardown tests are
@@ -120,3 +128,15 @@ This is a `v0.1.0` reference vertical slice. Known limitations are documented
 in [the architecture](docs/architecture.md#limitations). See
 [SECURITY.md](SECURITY.md), [CONTRIBUTING.md](CONTRIBUTING.md),
 [SUPPORT.md](SUPPORT.md), and [CHANGELOG.md](CHANGELOG.md).
+
+## Repository guide
+
+- [Architecture](docs/architecture.md)
+- [Threat model](docs/threat-model.md)
+- [Operations runbook](docs/runbook.md)
+- [Test matrix](docs/test-matrix.md)
+- [Security policy](SECURITY.md)
+- [Contributing guide](CONTRIBUTING.md)
+- [Support policy](SUPPORT.md)
+- [Changelog](CHANGELOG.md)
+- [License](LICENSE)
