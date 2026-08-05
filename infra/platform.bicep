@@ -1,3 +1,8 @@
+// AKS-Multi-Tenant-Istio-Platform infrastructure template.
+// Resource behavior stays in this file; deployment-time values are supplied by ./platform.bicepparam.
+
+// Deployment inputs: values are explicit, reviewable, and environment-specific.
+
 param location string
 param environmentName string
 param suffix string
@@ -6,6 +11,7 @@ param kubernetesVersion string
 param adminGroupObjectId string
 param nodeVmSize string
 
+// Resource logs: declares Microsoft.OperationalInsights/workspaces@2023-09-01 and its security settings.
 resource logs 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: 'log-aks-mt-${environmentName}-${suffix}'
   location: location
@@ -19,12 +25,14 @@ resource logs 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   }
 }
 
+// Resource monitor: declares Microsoft.Monitor/accounts@2023-04-03 and its security settings.
 resource monitor 'Microsoft.Monitor/accounts@2023-04-03' = {
   name: 'amw-aks-mt-${environmentName}-${suffix}'
   location: location
   properties: {}
 }
 
+// Resource grafana: declares Microsoft.Dashboard/grafana@2023-09-01 and its security settings.
 resource grafana 'Microsoft.Dashboard/grafana@2023-09-01' = {
   name: 'grafana-aks-mt-${environmentName}-${suffix}'
   location: location
@@ -42,6 +50,7 @@ resource grafana 'Microsoft.Dashboard/grafana@2023-09-01' = {
   }
 }
 
+// Resource vault: declares Microsoft.KeyVault/vaults@2023-07-01 and its security settings.
 resource vault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   name: 'kvmt${suffix}'
   location: location
@@ -58,6 +67,7 @@ resource vault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   }
 }
 
+// Resource aks: declares Microsoft.ContainerService/managedClusters@2024-10-01 and its security settings.
 resource aks 'Microsoft.ContainerService/managedClusters@2024-10-01' = {
   name: clusterName
   location: location
@@ -161,6 +171,7 @@ resource aks 'Microsoft.ContainerService/managedClusters@2024-10-01' = {
   }
 }
 
+// Deployment outputs: expose identifiers needed by operators and downstream automation.
 output clusterName string = aks.name
 output oidcIssuerUrl string = aks.properties.oidcIssuerProfile.issuerURL
 output keyVaultName string = vault.name

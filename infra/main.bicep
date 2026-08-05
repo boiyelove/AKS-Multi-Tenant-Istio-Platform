@@ -1,4 +1,9 @@
+// AKS-Multi-Tenant-Istio-Platform infrastructure template.
+// Resource behavior stays in this file; deployment-time values are supplied by ./main.bicepparam.
+
 targetScope = 'subscription'
+
+// Deployment inputs: values are explicit, reviewable, and environment-specific.
 
 @minLength(2)
 @maxLength(12)
@@ -9,7 +14,7 @@ param environmentName string
 param location string
 
 @description('AKS version is intentionally explicit; update after reviewing the compatibility matrix.')
-param kubernetesVersion string = '1.30.9'
+param kubernetesVersion string
 
 @description('Object ID of the Entra group that administers the cluster.')
 param adminGroupObjectId string
@@ -18,12 +23,14 @@ param adminGroupObjectId string
   'Standard_D4ds_v5'
   'Standard_D4s_v5'
 ])
-param nodeVmSize string = 'Standard_D4ds_v5'
+param nodeVmSize string
 
+// Derived configuration: constructs deterministic names, IDs, and policy values.
 var suffix = uniqueString(subscription().id, environmentName, location)
 var resourceGroupName = 'rg-aks-mt-${environmentName}'
 var clusterName = 'aks-mt-${environmentName}-${suffix}'
 
+// Resource rg: declares Microsoft.Resources/resourceGroups@2024-03-01 and its security settings.
 resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   name: resourceGroupName
   location: location
@@ -34,6 +41,7 @@ resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   }
 }
 
+// Module platform: composes platform.bicep with validated inputs.
 module platform 'platform.bicep' = {
   name: 'multiTenantPlatform'
   scope: rg
@@ -48,6 +56,7 @@ module platform 'platform.bicep' = {
   }
 }
 
+// Deployment outputs: expose identifiers needed by operators and downstream automation.
 output resourceGroupName string = rg.name
 output clusterName string = platform.outputs.clusterName
 output oidcIssuerUrl string = platform.outputs.oidcIssuerUrl
