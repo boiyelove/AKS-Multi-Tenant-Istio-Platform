@@ -12,6 +12,19 @@ subscription owners, shared nodes, DNS, and the Istio control plane remain
 trust boundaries. Use dedicated clusters when those boundaries are not
 acceptable.
 
+## Project metadata
+
+The metadata below is derived from tracked source, manifests, and infrastructure
+files. It describes what this repository includes; live-service integration remains
+bounded by the documented deployment and validation limitations.
+
+| Category | Included |
+| --- | --- |
+| Platforms | Microsoft Azure; GitHub Actions; Kubernetes |
+| Services and stack | AKS; Istio; Entra ID; Key Vault; Azure Monitor |
+| Languages and formats | Python; Bicep; Bicep parameters; Bash; JSON; YAML |
+| Delivery and IaC | Bicep + `.bicepparam`; GitHub Actions CI; Kubernetes/YAML manifests; Python validation/tests |
+
 ## Problem statement
 
 Two synthetic tenants are rendered into isolated namespaces with quotas, default-deny network policy, Istio strict mTLS, scoped authorization, and controlled egress; tests prove that cross-tenant paths remain denied.
