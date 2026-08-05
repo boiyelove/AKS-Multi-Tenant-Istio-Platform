@@ -12,33 +12,35 @@ subscription owners, shared nodes, DNS, and the Istio control plane remain
 trust boundaries. Use dedicated clusters when those boundaries are not
 acceptable.
 
-## Example synopsis
+## Problem statement
 
 Two synthetic tenants are rendered into isolated namespaces with quotas, default-deny network policy, Istio strict mTLS, scoped authorization, and controlled egress; tests prove that cross-tenant paths remain denied.
 
-## Real-world scenario
+A production implementation can still fail even when every resource deploys successfully. The material risk is a cluster that appears healthy while administration, workload identity, tenant isolation, recovery, scaling, or egress differs from the reviewed design. The design therefore treats AKS, Istio, Entra ID, and the surrounding identity and evidence controls as one reviewable system rather than unrelated configuration tasks.
+
+## Example case study
+
+### Situation
 
 An internal platform team wants to consolidate small business-unit workloads onto one AKS cluster without turning namespace boundaries into an honor system. This project makes isolation explicit and testable while retaining shared operational tooling.
 
+### Response
+
+Two product teams deploy similarly named services into isolated namespaces. The rendered Istio and Kubernetes policies allow intended ingress and service calls, while a synthetic cross-tenant request is denied with reproducible evidence.
+
+The team first exercises the repository's synthetic approved and denied fixtures. An approved request must produce the same idempotent plan on replay; a stale, unscoped, public, or unapproved request must fail before an Azure adapter is allowed to run.
+
+### Expected outcome
+
+Stakeholders receive a decision package they can attach to a change record: requested scope, controls evaluated, the reason for approval or denial, and the explicit handoff to live integration. The example supports design review and incident rehearsal without pretending that a local test changed Azure.
+
 ## Architecture
 
-```mermaid
-flowchart LR
-  O[Platform operator] -->|Bicep| A[Private AKS]
-  A --> I[Managed Istio]
-  R[tenant_renderer.py] --> B[Tenant bundle]
-  B --> N[Namespace + quota]
-  B --> Z[RBAC + workload identity]
-  B --> P[NetworkPolicy + mTLS + authz]
-  B --> E[Sidecar egress allowlist]
-  N --> A
-  Z --> A
-  P --> I
-  E --> I
-  A --> M[Azure Monitor workspace]
-  A --> G[Managed Grafana]
-  Z --> K[Key Vault]
-```
+![Icon-based architecture for AKS-Multi-Tenant-Istio-Platform](docs/architecture.svg)
+
+The upper boundary names the principal services and technologies used by this repository. The lower boundary shows the implemented control flow: desired state is validated, provider action remains an explicit integration gate, and sanitized evidence is retained for review and deterministic replay.
+
+Azure product icons come from [Microsoft's official Azure Architecture Icons](https://learn.microsoft.com/azure/architecture/icons/). Open-source marks are sourced from [Simple Icons](https://simpleicons.org/) when shown; each mark identifies its respective technology.
 
 See [architecture](docs/architecture.md), [threat model](docs/threat-model.md),
 [ADR 0001](docs/adr/0001-managed-istio-and-namespace-boundary.md), and the
@@ -105,7 +107,7 @@ organization-specific.
 
 ## Verification and evidence
 
-[[`./scripts/validate.sh`](scripts/validate.sh)](scripts/validate.sh) compiles Bicep when Azure CLI is available, renders the
+[`./scripts/validate.sh`](scripts/validate.sh) compiles Bicep when Azure CLI is available, renders the
 sample twice and compares bytes, runs unit/security tests, validates JSON, and
 checks shell scripts. CI repeats these gates and runs Trivy configuration and
 secret scans. Live AKS denial, recovery, identity, load, and teardown tests are
