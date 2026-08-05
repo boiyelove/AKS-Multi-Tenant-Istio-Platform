@@ -44,6 +44,14 @@ See [architecture](docs/architecture.md), [threat model](docs/threat-model.md),
 [ADR 0001](docs/adr/0001-managed-istio-and-namespace-boundary.md), and the
 [operator runbook](docs/runbook.md).
 
+## Best complementary diagram
+
+**Recommended view: Tenant-isolation and service-mesh topology.** A topology view is the strongest complement because it makes network and identity boundaries, enforcement hops, and the governed path physically legible.
+
+![Icon-based tenant-isolation and service-mesh topology for AKS Multi-Tenant Istio Platform](docs/operational-view.svg)
+
+The view follows **Enter tenant namespace → Authenticate workload → Authorize mesh traffic → Control shared egress**. Use it during design reviews, operational walkthroughs, and failure-mode discussions; use the logical architecture above when the question is which technologies integrate.
+
 ## Local quickstart
 
 Prerequisites: Python 3.11+, Azure CLI with Bicep, and optionally `kubectl`.
